@@ -1,0 +1,53 @@
+<nav class="navbar navbar-expand-md navbar-light fixed-top bg-light ">
+    <a class="navbar-brand" href="/">⌂ Home</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+        <div class="form-inline my-2 my-lg-0 mr-auto">
+<!--            <form class="form-inline my-2 my-lg-0 mr-auto">-->
+<!--                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">-->
+<!--                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+<!--            </form>-->
+
+            <ul class="navbar-nav  ml-5">
+                <li class="nav-item"><a class="nav-link  " href="/admin">ADMIN</a></li>
+                <li class="nav-item"><a class="nav-link " href="/swagger-ui/">API with Swagger UI</a></li>
+            </ul>
+        </div>
+
+        <ul class="navbar-nav ">
+            <!--            <li class="nav-item active">-->
+            <!--                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>-->
+            <!--            </li>-->
+            <!--            <li class="nav-item"><a class="nav-link" href="/admin">ADMIN</a></li>-->
+            <!--            <li class="nav-item"><a class="nav-link" href="/swagger-ui/">API with Swagger UI</a></li>-->
+            <!--            <li class="nav-item"><span class="navbar-text ml-5">  </span></li>-->
+            {% if user.is_authenticated %}
+            <li class="nav-item"><span class="navbar-text ml-5 mr-3 text-success">Hi {{ user.username }}!</span></li>
+            <li class="nav-item"><a class="nav-link " href="{% url 'logout' %}">Log Out</a></li>
+            <!--            <a href="{% url 'logout' %}">Log Out</a> 🔹-->
+            {% else %}
+            <li class="nav-item"><span class="navbar-text  ml-5 mr-3  text-warning">You are not logged in </span></li>
+            <li class="nav-item"><a class="nav-link " href="{% url 'login' %}">Log In</a></li>
+            <li class="nav-item"><a class="nav-link " href="/register">Register</a></li>
+            {% endif %}
+            <!--            <li class="nav-item">-->
+            <!--                <a class="nav-link disabled" href="/swagger-ui/" tabindex="-1" aria-disabled="true">Disabled</a>-->
+            <!--            </li>-->
+            <!--            <li class="nav-item dropdown">-->
+            <!--                <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true"-->
+            <!--                   aria-expanded="false">Dropdown</a>-->
+            <!--                <div class="dropdown-menu" aria-labelledby="dropdown01">-->
+            <!--                    <a class="dropdown-item" href="#">Action</a>-->
+            <!--                    <a class="dropdown-item" href="#">Another action</a>-->
+            <!--                    <a class="dropdown-item" href="#">Something else here</a>-->
+            <!--                </div>-->
+            <!--            </li>-->
+        </ul>
+
+    </div>
+</nav>

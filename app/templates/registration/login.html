@@ -1,0 +1,22 @@
+<!-- templates/registration/login.html -->
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<main role="main" class="mt-5">
+    <!-- messages-->
+    {% include 'app/messages.html' %}
+    {% include 'app/navbar.html' %}
+    <div class="container pt-5 pb-5">
+        <h2>Log In</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Log In</button>
+        </form>
+    </div>
+        {% include 'app/footer-basic.html' %}
+</main>
+{% endblock %}

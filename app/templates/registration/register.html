@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main role="main" class="mt-5">
+    <!-- messages-->
+    {% include 'app/messages.html' %}
+    {% include 'app/navbar.html' %}
+
+    <!--Register-->
+    <div class="container py-5">
+        <h1>Register</h1>
+        {% if messages %}
+        <div>
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}" role="alert"> {{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <table>
+                {{ form }}
+            </table>
+
+            <button class="btn btn-primary" type="submit">Register</button>
+        </form>
+
+        <p class="text-center">If you already have an account, <a href="/accounts/login/">login</a> instead.</p>
+
+    </div>
+    {% include 'app/footer-basic.html' %}
+</main>
+
+{% endblock %}
