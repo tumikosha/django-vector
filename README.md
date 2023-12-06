@@ -134,4 +134,21 @@
     accounts/reset/done/ [name='password_reset_complete']
 
 
-....
+# PG VECTOR
+## configure engine in settings.py
+    DATABASES = {
+        # 'default': {
+        #     'ENGINE': 'django.db.backends.sqlite3',
+        #     'NAME': BASE_DIR / 'db.sqlite3',
+        # }
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'vector_db',
+            'USER': "postgres",
+            'PASSWORD': "postgres", # ? test
+            'HOST': "localhost",
+            'PORT': 5432,
+        }
+    }
+
+### create vector_db via PgAdmin

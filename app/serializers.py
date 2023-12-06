@@ -7,7 +7,7 @@ from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.response import Response
 
 from app.code.calculator import calculate_expression
-from app.models import Snippet
+from app.models import Snippet, Company
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -57,3 +57,21 @@ class SnippetSerializer(serializers.ModelSerializer):
         snippet.save()
         return snippet
 
+
+class CompanySerializer(serializers.ModelSerializer):
+    # author = PrimaryKeyRelatedField(queryset=User.objects.all())
+    # author = PrimaryKeyRelatedField(read_only=True,
+    #                                 # default=serializers.CurrentUserDefault(), help_text="primary key",
+    #                                 default=CurrentUserDefaultWithErr(), help_text="primary key",
+    #                                 )
+
+    class Meta:
+        model = Snippet
+        fields = ['uuid_id', 'title']
+        # read_only_fields = ['author', 'created', 'have_error', 'result']
+
+    def create(self, validated_data):
+        company = Company.objects.create(**validated_data)
+        company.title = "random title"
+        company.save()
+        return company

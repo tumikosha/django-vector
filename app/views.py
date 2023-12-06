@@ -19,6 +19,7 @@ from django.contrib.auth import login
 from django.contrib import messages
 
 from .serializers import SnippetSerializer
+from app.models import Company
 
 
 @csrf_exempt
@@ -62,7 +63,10 @@ def index(request) -> HttpResponse | TemplateResponse:
     if request.user.is_authenticated:
         history = Snippet.objects.order_by('-created').all()[0:10]
 
-    context = {"form": rendered_form, "history": history}
+    # ---=== show embeddings ===---
+    companies = Company.objects.all()[0:10]
+
+    context = {"form": rendered_form, "history": history, "companies": companies}
     return TemplateResponse(request, 'app/index.html', context)
 
 

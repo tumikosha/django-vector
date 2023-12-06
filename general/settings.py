@@ -90,7 +90,6 @@ DATABASES = {
         'PASSWORD': "postgres", # ? test
         'HOST': "localhost",
         'PORT': 5432,
-
     }
 }
 

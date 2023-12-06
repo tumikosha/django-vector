@@ -4,91 +4,60 @@
 {% block content %}
 
 
-<main role="main" class="mt-5">
-    <!-- messages-->
-    {% include 'app/messages.html' %}
-    {% include 'app/navbar.html' %}
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron pt-5 pb-2">
+    <main role="main" class="mt-5">
+        <!-- messages-->
+        {% include 'app/messages.html' %}
+        {% include 'app/navbar.html' %}
+        <!-- Main jumbotron for a primary marketing message or call to action -->
+        <div class="jumbotron pt-5 pb-2">
+            <div class="container">
+                <h1 class="display-5">Hello, this is Calculator app</h1>
+                <p>
+                <form action="/" method="POST" style="width:800px">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input type="submit" value="CALCULATE">
+                </form>
+                <!--            This is a template for a simple marketing or informational website. It includes a large callout called a-->
+                <!--            jumbotron and three supporting pieces of content. Use it as a starting point to create something more-->
+                <!--            unique.-->
+                </p>
+
+
+                <p><a class="btn btn-primary btn-lg" href="/swagger-ui/" role="button">Try more &raquo;</a></p>
+            </div>
+        </div>
         <div class="container">
-            <h1 class="display-5">Hello, this is Calculator app</h1>
+
+            {% if history is None %}
+                <h1 class="display-5">There is no history...</h1>
+            {% else %}
+                <h2 class="display-5">Latest success actitvity</h2>
+
+                {% for snippet in history %}
+                    {{ snippet.author }} <span style="color:green">{{ snippet.created }}</span> {{ snippet.code }} =
+                    <!--            {{ snippet.have_error}} &nbsp; {{ snippet.result}}-->
+                    {% if snippet.have_error %}
+                        <span style="color:red">{{ snippet.result }}</span>
+                    {% else %}
+                        <span style="color:green">{{ snippet.result }}</span>
+                    {% endif %}
+                    </br>
+                {% endfor %}
+            {% endif %}
             <p>
-            <form action="/" method="POST" style="width:800px">
-                {% csrf_token %}
-                {{ form }}
-                <input type="submit" value="CALCULATE">
-            </form>
-            <!--            This is a template for a simple marketing or informational website. It includes a large callout called a-->
-            <!--            jumbotron and three supporting pieces of content. Use it as a starting point to create something more-->
-            <!--            unique.-->
-            </p>
-
-
-            <p><a class="btn btn-primary btn-lg" href="/swagger-ui/" role="button">Try more &raquo;</a></p>
         </div>
-    </div>
-    <div class="container">
 
-        {% if history is None %}
-        <h1 class="display-5">There is no history...</h1>
-        {% else %}
-        <h2 class="display-5">Latest success actitvity</h2>
-
-        {% for snippet in history %}
-        {{ snippet.author }} <span style="color:green">{{ snippet.created}}</span> {{ snippet.code }} =
-        <!--            {{ snippet.have_error}} &nbsp; {{ snippet.result}}-->
-        {% if snippet.have_error %}
-        <span style="color:red">{{ snippet.result}}</span>
-        {% else %}
-        <span style="color:green">{{ snippet.result}}</span>
-        {% endif %}
-        </br>
-        {% endfor %}
-        {% endif %}
-        <p>
-    </div>
-
-    <div class="container">
-        <!-- Example row of columns -->
-        <div class="row">
-<!--            <div class="col-md-2">-->
-<!--                <h2>Heading</h2>-->
-<!--                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor-->
-<!--                    mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna-->
-<!--                    mollis euismod. Donec sed odio dui. </p>-->
-<!--                <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>-->
-<!--            </div>-->
-
-            <div class="col-md-10">
-                <h2>Access to calculation history </h2>
-
-                <pre><code>
-                   curl -u admin:pass123456 -X 'GET' \
-                  'http://127.0.0.1:8877/api/Snippet/' \
-                  -H 'accept: application/json' \
-                  -H 'X-CSRFToken: cjTMHUIdrcXiC9dv1CE79zW3Zaa6yAdCDB4AOpiophZ1qofozvfjEdacHM5stPrm'
-            </code></pre>
-<!--               <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>-->
-            </div>
-            <div class="col-md-10">
-                <h2>Call calculator </h2>
-                <pre><code>
-                curl -u admin:pass123456 -X 'POST' \
-                'http://127.0.0.1:8877/api/Snippet/' \
-                -H 'accept: application/json' \
-                -H 'Content-Type: application/json' \
-                -H 'X-CSRFToken: cjTMHUIdrcXiC9dv1CE79zW3Zaa6yAdCDB4AOpiophZ1qofozvfjEdacHM5stPrm' \
-                -d '{
-                "code": "2+2"
-                }'
-                </code></pre>
-            </div>
-        </div>
-        <hr>
-
-    </div> <!-- /container -->
-    {% include 'app/footer-basic.html' %}
-</main>
+        <div class="container">
+            <h2>Comapnies</h2>
+            <hr>
+            {% for company in companies %}
+                {{ company.domain }} |||>   {{ company.title }}
+                </br>
+            {% endfor %}
+        </div> <!-- /container -->
+        {% include 'app/footer-basic.html' %}
+    </main>
 
 {% endblock %}
 
