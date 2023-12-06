@@ -2,7 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.db import models
 from django import forms
 from django.contrib.auth.models import User
-
+from pgvector.django import VectorField
 
 # Create your models here.
 
@@ -26,3 +26,4 @@ class Snippet(models.Model):
 
     class Meta:
         ordering = ['created']
+
