@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.db import models
 from django import forms
 from django.contrib.auth.models import User
-from pgvector.django import VectorField
+from pgvector.django import VectorField, IvfflatIndex, HnswIndex
 from django.utils.timezone import now
 
 # encoder: SentenceTransformer = SentenceTransformer("all-MiniLM-L6-v2")
@@ -59,6 +59,22 @@ class Company(models.Model):
 
     class Meta:
         ordering = ['created_at']
+        indexes = [
+            IvfflatIndex(
+                name='company_ivff_index',
+                fields=['embedding'],
+                lists=100,
+                opclasses=['vector_l2_ops']
+            ),
+            # or
+            HnswIndex(
+                name='company_hnsv_index',
+                fields=['embedding'],
+                m=16,
+                ef_construction=64,
+                opclasses=['vector_l2_ops']
+            )
+        ]
 
     # domain = forms.CharField(max_length=80)
     # web_page = forms.CharField(max_length=120)

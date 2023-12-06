@@ -152,3 +152,16 @@
     }
 
 ### create vector_db via PgAdmin
+
+# (Open Questions)
+    - apply index 
+        https://www.crunchydata.com/blog/hnsw-indexes-with-postgres-and-pgvector
+        
+        CREATE INDEX ON recipes
+        USING hnsw (embedding vector_l2_ops)
+        WITH (m = 4, ef_construction = 10);
+
+    - test can destroy production DB sometimes ?
+    - disable enable indexing
+    - 
+

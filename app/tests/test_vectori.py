@@ -2,13 +2,13 @@
 """
 File: test_snippet_api.py
 Authors: Veaceslav Kunitki<tumikosha@fmail.com>
-Description: tests for snippet APi
+Description: tests for PG_Vector module
+    https://github.com/pgvector/pgvector-python#django
+    This test uses the sentense encoder "all-MiniLM-L6-v2"
 """
-from rest_framework import status
-from django.contrib.auth.models import User
+from django.db.models import Avg
 from rest_framework.test import APITestCase
 from app.models import Snippet, Company
-from django.urls import reverse
 from sentence_transformers import SentenceTransformer
 from pgvector.django import L2Distance
 
@@ -120,10 +120,58 @@ class VectorTestCase(APITestCase):
         assert True
         # assert len(res) == len(documents)
 
+    def test_get_the_distance(self):
+        # Also supports MaxInnerProduct and CosineDistance
+        # Get the distance
+        query = "alien invasion"
+        query_vector = encoder.encode(query).tolist()
+        result = Company.objects.annotate(
+            distance=L2Distance('embedding', query_vector))[:5]
+        for row in result:
+            print("D::", row.distance, row.title, row.summary)
+        # print(res)
+        assert True
+
+    def test_get_distance(self):
+        query = "alien invasion"
+        query_vector = encoder.encode(query).tolist()
+        result = Company.objects.alias(distance=L2Distance('embedding', query_vector))\
+            .filter(distance__lt=5)
+        for row in result:
+            print("D::", row.title, row.summary)
+        # print(res)
+        assert True
+
+    def test_ordered_with_distance(self):
+        # Also supports MaxInnerProduct and CosineDistance
+        # Get the distance
+        query = "alien invasion"
+        query_vector = encoder.encode(query).tolist()
+        result = Company.objects.annotate(
+            distance=L2Distance('embedding', query_vector)
+        ).order_by(L2Distance('embedding', query_vector))[:5]
+        for row in result:
+            print("D::", row.distance, row.title, row.summary)
+        # print(res)
+        assert True
+
+    def test_average(self):
+        # Also supports MaxInnerProduct and CosineDistance
+        # Get the distance
+        query = "alien invasion"
+        query_vector = encoder.encode(query).tolist()
+        result = Company.objects.aggregate(Avg('embedding'))
+        print(result)
+        # for row in result:
+        #     print("D::", row.distance, row.title, row.summary)
+        # print(res)
+        assert True
+
+
 # QDRANT Example
-# score: 0.5700933298008086 {'name': 'The War of the Worlds', 'description': 'A Martian invasion of Earth throws humanity into chaos.', 'author': 'H.G. Wells', 'year': 1898}
-# score: 0.5040467286968837 {'name': "The Hitchhiker's Guide to the Galaxy", 'description': 'A comedic science fiction series following the misadventures of an unwitting human and his alien friend.', 'author': 'Douglas Adams', 'year': 1979}
-# score: 0.4590294360605083 {'name': 'The Three-Body Problem', 'description': 'Humans encounter an alien civilization that lives in a dying system.', 'author': 'Liu Cixin', 'year': 2008}
+    # score: 0.5700933298008086 {'name': 'The War of the Worlds', 'description': 'A Martian invasion of Earth throws humanity into chaos.', 'author': 'H.G. Wells', 'year': 1898}
+    # score: 0.5040467286968837 {'name': "The Hitchhiker's Guide to the Galaxy", 'description': 'A comedic science fiction series following the misadventures of an unwitting human and his alien friend.', 'author': 'Douglas Adams', 'year': 1979}
+    # score: 0.4590294360605083 {'name': 'The Three-Body Problem', 'description': 'Humans encounter an alien civilization that lives in a dying system.', 'author': 'Liu Cixin', 'year': 2008}
 # PGVector
 #     The War of the Worlds A Martian invasion of Earth throws humanity into chaos.
 #     The Hitchhiker's Guide to the Galaxy A comedic science fiction series following the misadventures of an unwitting human and his alien friend.
