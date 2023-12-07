@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'rest_framework',
     'app',
 ]
@@ -87,7 +88,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'vector_db',
         'USER': "postgres",
-        'PASSWORD': "postgres", # ? test
+        'PASSWORD': "postgres",  # ? test
         'HOST': "localhost",
         'PORT': 5432,
     }
@@ -135,12 +136,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-    'DEFAULT_PERMISSION_CLASSES': ( # ???
+    'DEFAULT_PERMISSION_CLASSES': (  # ???
         'rest_framework.permissions.AllowAny',
     ),
 }
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
-
-

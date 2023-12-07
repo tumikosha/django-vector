@@ -7,58 +7,80 @@ Description: Contain app views
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import csrf_exempt
+from pgvector.django import L2Distance
 from rest_framework import generics, status
 from rest_framework.response import Response
 
 from app.code import calculator
-from app.forms import MathForm
+from app.forms import SearchForm
 from app.models import Snippet
 from django.shortcuts import render
+
+from util import common
 from .forms import NewUserForm
 from django.contrib.auth import login
 from django.contrib import messages
 
 from .serializers import SnippetSerializer
 from app.models import Company
+from django.core.paginator import Paginator
+
+PAGE_SIZE = 10
 
 
 @csrf_exempt
 def index(request) -> HttpResponse | TemplateResponse:
-    """ SHOWS Home page and process MathForm
+    """ SHOWS Home page and process SearchForm
     if this is a POST request we need to process the form data   """
     result = " --"
     history = None
 
     if request.method == "POST":
-        form = MathForm(request.POST or None)  # create a form instance and populate it with data from the request:
+        form = SearchForm(request.POST or None)  # create a form instance and populate it with data from the request:
 
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
-            expression: str = form.cleaned_data["math"]
-            have_error, result = calculator.calculate_expression(expression)
+            input_str: str = form.cleaned_data["query"]
+            # have_error, result = calculator.calculate_expression(expression)
+            companies = None
             if request.user.is_authenticated:
-                snippet = Snippet.objects.create(code=expression, author=request.user,
-                                                 have_error=have_error, result=result)
+                vector = common.encoder.encode(input_str).tolist()
+                # companies = Company.objects.order_by(L2Distance('embedding', vector))[:PAGE_SIZE]
+                companies = Company.objects.annotate(
+                    distance=L2Distance('embedding', vector)
+                ).order_by(L2Distance('embedding', vector))
+                paginator = Paginator(companies, per_page=2)
+                page = 2
+                page_object = paginator.get_page(page)
+                page_object.adjusted_elided_pages = paginator.get_elided_page_range(page)
+                print("distances:",[cmp.distance for cmp in companies])
+                context = {"form": form, "companies": companies, "page_obj": page_object}
+                return render(request, "app/index.html", context)
 
-                history = Snippet.objects.filter(have_error=False).order_by('-created').all()[0:10]
             else:
-                messages.error(request, "Because you are not logged expression is not saved to history ",
+                vector = common.encoder.encode(input_str).tolist()
+                # companies = Company.objects.order_by(L2Distance('embedding', vector))[:PAGE_SIZE]
+                companies = Company.objects.annotate(
+                    distance=L2Distance('embedding', vector)
+                ).order_by(L2Distance('embedding', vector))[:PAGE_SIZE]
+
+                messages.error(request, "We found 33 more people matching your request<br>"
+                                        "To get more relevant results and unlock extra data sources, you need to sign in",
                                extra_tags="danger")
-            if have_error:
-                messages.error(request, "Result: " + str(result))
-            else:
-                messages.success(request, "Result: " + str(result))
-            context = {"form": form, "history": history}
+
+            # messages.error(request, "Result: " + str(result))
+            # messages.success(request, "Result: " + str(result))
+            context = {"form": form, "companies": companies}
             return render(request, "app/index.html", context)
         else:  # form is not valid ?
-            context = {"form": form, "history": history}
+            context = {"form": form, "companies": None}
             return render(request, "app/index.html", context)
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = MathForm(request.POST or None)
-        rendered_form = form.render(template_name="app/math_form.html")
+        form = SearchForm(request.POST or None)
+        rendered_form = form.render(template_name="app/search_form.html")
 
     if request.user.is_authenticated:
         history = Snippet.objects.order_by('-created').all()[0:10]

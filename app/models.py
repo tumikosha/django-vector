@@ -37,25 +37,15 @@ class Snippet(models.Model):
         ordering = ['created']
 
 
-# class Snippet222(models.Model):
-#     """ Object for history of calculations"""
-#     created = models.DateTimeField(auto_now_add=True)
-#     code = models.TextField()
-#     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-#     result = models.TextField(null=True)
-#     have_error = models.BooleanField(default=False)
-#
-#     class Meta:
-#         ordering = ['created']
-
-
 class Company(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     zip = models.CharField(max_length=8, null=True)
+    domain = models.TextField(null=True)
     title = models.TextField(null=True)
     summary = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     embedding = VectorField(dimensions=STD_VECTOR_SIZE, null=True)
+
 
     class Meta:
         ordering = ['created_at']

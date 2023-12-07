@@ -2,7 +2,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-
+{% load humanize %}
 
     <main role="main" class="mt-5">
         <!-- messages-->
@@ -11,50 +11,35 @@
         <!-- Main jumbotron for a primary marketing message or call to action -->
         <div class="jumbotron pt-5 pb-2">
             <div class="container">
-                <h1 class="display-5">Hello, this is Calculator app</h1>
+                <h1 class="display-5">Vector search example</h1>
                 <p>
                 <form action="/" method="POST" style="width:800px">
                     {% csrf_token %}
                     {{ form }}
-                    <input type="submit" value="CALCULATE">
+                    <input type="submit" value="Search">
                 </form>
-                <!--            This is a template for a simple marketing or informational website. It includes a large callout called a-->
-                <!--            jumbotron and three supporting pieces of content. Use it as a starting point to create something more-->
-                <!--            unique.-->
                 </p>
-
-
-                <p><a class="btn btn-primary btn-lg" href="/swagger-ui/" role="button">Try more &raquo;</a></p>
             </div>
         </div>
         <div class="container">
 
-            {% if history is None %}
-                <h1 class="display-5">There is no history...</h1>
-            {% else %}
-                <h2 class="display-5">Latest success actitvity</h2>
-
-                {% for snippet in history %}
-                    {{ snippet.author }} <span style="color:green">{{ snippet.created }}</span> {{ snippet.code }} =
-                    <!--            {{ snippet.have_error}} &nbsp; {{ snippet.result}}-->
-                    {% if snippet.have_error %}
-                        <span style="color:red">{{ snippet.result }}</span>
-                    {% else %}
-                        <span style="color:green">{{ snippet.result }}</span>
-                    {% endif %}
-                    </br>
-                {% endfor %}
-            {% endif %}
             <p>
         </div>
 
         <div class="container">
-            <h2>Comapnies</h2>
+            <h2>Companies</h2>
             <hr>
-            {% for company in companies %}
-                {{ company.domain }} |||>   {{ company.title }}
+            {% if companies is None %}
+                <h1 class="display-5">There is no history...</h1>
+            {% else %}
+                {% for company in companies %}
+                    <span class="badge badge-secondary small" title="similarity is {{ company.distance|floatformat:2 }}">
+                        {{ company.distance|floatformat:2 }}</span>
+                    <a class="link-dark ml-2" href="//{{ company.domain }}">{{ company.domain }}</a>    {{ company.title }}<br>
+                    <div  title="summary">{{ company.summary }}</div>
                 </br>
-            {% endfor %}
+                {% endfor %}
+            {% endif %}
         </div> <!-- /container -->
         {% include 'app/footer-basic.html' %}
     </main>
