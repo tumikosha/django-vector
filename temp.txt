@@ -1,0 +1,13 @@
+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
+
+curl https://api-inference.huggingface.co/models/meta-llama/Llama-2-70b-chat-hf \
+	-X POST \
+	-d '{"inputs": "Can you please let us know more details about your "}' \
+	-H 'Content-Type: application/json' \
+	-H "Authorization: Bearer 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"
+
+curl https://api-inference.huggingface.co/models/meta-llama/Llama-2-13b-chat-hf \
+	-X POST \
+	-d '{"inputs": "Can you please let us know more details about your "}' \
+	-H 'Content-Type: application/json' \
+	-H "Authorization: Bearer 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"

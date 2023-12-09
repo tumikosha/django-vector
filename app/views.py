@@ -17,6 +17,8 @@ from app.models import Snippet
 from django.shortcuts import render
 
 from util import common
+from util import common
+from util.common import final
 from .forms import NewUserForm
 from django.contrib.auth import login
 from django.contrib import messages
@@ -25,7 +27,7 @@ from .serializers import SnippetSerializer
 from app.models import Company
 from django.core.paginator import Paginator
 
-PAGE_SIZE = 10
+PAGE_SIZE = 100
 
 
 @csrf_exempt
@@ -42,6 +44,7 @@ def index(request) -> HttpResponse | TemplateResponse:
         if form.is_valid():
             # process the data in form.cleaned_data as required
             input_str: str = form.cleaned_data["query"]
+            print("# --> input_str:", input_str)
             # have_error, result = calculator.calculate_expression(expression)
             companies = None
             if request.user.is_authenticated:
@@ -50,11 +53,13 @@ def index(request) -> HttpResponse | TemplateResponse:
                 companies = Company.objects.annotate(
                     distance=L2Distance('embedding', vector)
                 ).order_by(L2Distance('embedding', vector))
+
                 paginator = Paginator(companies, per_page=2)
                 page = 2
                 page_object = paginator.get_page(page)
                 page_object.adjusted_elided_pages = paginator.get_elided_page_range(page)
-                print("distances:",[cmp.distance for cmp in companies])
+                # print("distances:", [cmp.distance for cmp in companies])
+                companies = final(companies)
                 context = {"form": form, "companies": companies, "page_obj": page_object}
                 return render(request, "app/index.html", context)
 
@@ -71,6 +76,7 @@ def index(request) -> HttpResponse | TemplateResponse:
 
             # messages.error(request, "Result: " + str(result))
             # messages.success(request, "Result: " + str(result))
+            companies = final(companies)
             context = {"form": form, "companies": companies}
             return render(request, "app/index.html", context)
         else:  # form is not valid ?
@@ -83,10 +89,12 @@ def index(request) -> HttpResponse | TemplateResponse:
         rendered_form = form.render(template_name="app/search_form.html")
 
     if request.user.is_authenticated:
-        history = Snippet.objects.order_by('-created').all()[0:10]
+        history = Snippet.objects.order_by('-created').all()[0:PAGE_SIZE]
 
     # ---=== show embeddings ===---
-    companies = Company.objects.all()[0:10]
+
+    companies = Company.objects.all()[0:PAGE_SIZE]
+    companies = final(companies)
 
     context = {"form": rendered_form, "history": history, "companies": companies}
     return TemplateResponse(request, 'app/index.html', context)

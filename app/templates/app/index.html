@@ -2,7 +2,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-{% load humanize %}
+    {% load humanize %}
 
     <main role="main" class="mt-5">
         <!-- messages-->
@@ -11,7 +11,7 @@
         <!-- Main jumbotron for a primary marketing message or call to action -->
         <div class="jumbotron pt-5 pb-2">
             <div class="container">
-                <h1 class="display-5">Vector search example</h1>
+                <h1 class="display-5">Open meet book</h1>
                 <p>
                 <form action="/" method="POST" style="width:800px">
                     {% csrf_token %}
@@ -29,17 +29,76 @@
         <div class="container">
             <h2>Companies</h2>
             <hr>
-            {% if companies is None %}
-                <h1 class="display-5">There is no history...</h1>
-            {% else %}
-                {% for company in companies %}
-                    <span class="badge badge-secondary small" title="similarity is {{ company.distance|floatformat:2 }}">
-                        {{ company.distance|floatformat:2 }}</span>
-                    <a class="link-dark ml-2" href="//{{ company.domain }}">{{ company.domain }}</a>    {{ company.title }}<br>
-                    <div  title="summary">{{ company.summary }}</div>
-                </br>
-                {% endfor %}
-            {% endif %}
+
+            {% for company in companies %}
+                <div class="container mt-5">
+                    <h5>
+                        <div>
+                            {% if company.distance is not None %}
+                                <span class="badge badge-primary small"
+                                      title="similarity is {{ company.distance|floatformat:2 }}">
+                                {{ company.distance|floatformat:2 }}
+                            </span>
+                            {% endif %}
+                            {% if company.name is not None %}
+                                <span class="mr-2">{{ company.name }} </span>
+                            {% endif %}
+                            <a class="link-dark" href="//{{ company.domain }}">{{ company.domain }}</a>
+
+                        </div>
+                    </h5>
+
+                    <div class="row">
+                        <span class="col-md-12">
+                            {% if company.logo is not None %}
+                                <img style='float:left; width:32px; height:32px; margin-right:10px;'
+                                     src="//{{ company.logo }}" onerror="this.style.width=0; this.style.height=0;"/>
+
+                            {% endif %}
+
+                            <div class="text-secondary">
+                                {{ company.title }}<br>
+                                {% if company.description is not None %}
+                                    {{ company.description }}
+                                {% else %}
+                                    <br>
+                                {% endif %}
+                            </div>
+                            <a class="link-danger mt-0" target="_blank" href="//calendly.com/{{ company.link0 }}">
+                                Book a call</a>
+                        </span>
+                    </div>
+                </div>
+                {#                <div>#}
+                {#                        <span class="badge badge-secondary small"#}
+                {#                              title="similarity is {{ company.distance|floatformat:2 }}">#}
+                {#                            {{ company.distance|floatformat:2 }}#}
+                {##}
+                {#                        </span>#}
+                {#                    <a class="link-dark ml-2"#}
+                {#                       href="//{{ company.domain }}">{{ company.domain }}</a> {{ company.name }}#}
+                {#                </div>#}
+                {##}
+                {##}
+                {#                {% if company.logo is not None %}#}
+                {#                    <img class="float-left mr-2 d-block" src="//{{ company.logo }}" width="32px"#}
+                {#                         height="32px"></img>#}
+                {#                {% endif %}#}
+                {##}
+                {##}
+                {#                {{ company.title }}#}
+                {#                {{ company.description }}#}
+                {##}
+                {##}
+                {#                <div class="d-block">#}
+                {#                    <a class="link-danger" target="_blank" href="//calendly.com/{{ company.link0 }}">Book a#}
+                {#                        call</a>#}
+                {#                </div>#}
+                {#                </br>#}
+                {##}
+                {#                </br>#}
+            {% endfor %}
+
         </div> <!-- /container -->
         {% include 'app/footer-basic.html' %}
     </main>

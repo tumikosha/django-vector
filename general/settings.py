@@ -88,8 +88,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'vector_db',
         'USER': "postgres",
-        'PASSWORD': "postgres",  # ? test
-        'HOST': "localhost",
+        'PASSWORD': "postgriusha",  # ? test
+        # 'HOST': "localhost",
+        'HOST': "postgres",  # this host added to /etc/hosts -> 127.0.0.1
         'PORT': 5432,
     }
 }

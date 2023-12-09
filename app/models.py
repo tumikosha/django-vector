@@ -39,13 +39,47 @@ class Snippet(models.Model):
 
 class Company(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    zip = models.CharField(max_length=8, null=True)
+    blocked = models.BooleanField(default=False)
     domain = models.TextField(null=True)
+    name = models.TextField(null=True)
     title = models.TextField(null=True)
+    description = models.TextField(null=True)
+    full_txt = models.TextField(null=True)
     summary = models.TextField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    embedding = VectorField(dimensions=STD_VECTOR_SIZE, null=True)
+    first_indexed = models.DateTimeField(auto_now_add=True)
 
+    embedding = VectorField(dimensions=STD_VECTOR_SIZE, null=True)
+    sales_revenue = models.CharField(max_length=12, null=True)
+    revenue = models.CharField(max_length=12, null=True)
+    employees = models.IntegerField(null=True)
+    industry = models.TextField(null=True)  # vertical aka category
+    logo = models.TextField(null=True)
+    linkedin = models.TextField(null=True)
+    facebook = models.CharField(max_length=40, null=True)
+    youtube = models.TextField(null=True)  # models.CharField(max_length=60, null=True)
+    vimeo = models.TextField(null=True)  # models.CharField(max_length=60, null=True)
+    vk = models.CharField(max_length=40, null=True)
+    instagram = models.CharField(max_length=40, null=True)
+    google = models.CharField(max_length=40, null=True)
+    threads = models.CharField(max_length=40, null=True)
+    twitter = models.CharField(max_length=40, null=True)
+    github = models.TextField(null=True)
+    # calendly = models.TextField(null=True)
+    calendly = models.JSONField(null=True)
+    calendly_acc_num = models.IntegerField(null=True, default=None)
+    calendly_events_num = models.IntegerField(null=True, default=None)
+    calendly_open_days_num = models.IntegerField(null=True, default=None)
+    emails = models.TextField(null=True)
+    emails_json = models.JSONField(null=True)
+    phones = models.TextField(max_length=40, null=True)
+    phones_json = models.JSONField(null=True)
+    zip = models.CharField(max_length=8, null=True)
+    city = models.CharField(max_length=40, null=True)
+    country = models.CharField(max_length=8, null=True)
+    state = models.CharField(max_length=8, null=True)
+
+    # First_Detected, Last_Found, First_Indexed, Last_Indexed, CIK_No, SIC_Code, Tickers, Exchanges, Period_Start, Period_End, Revenue, Operating_Income, Net_Income, Assets
 
     class Meta:
         ordering = ['created_at']

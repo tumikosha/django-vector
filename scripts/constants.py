@@ -1,18 +1,10 @@
-import os
+from scripts import proxies
 
-from util.common import string_2_uuid
+MONGO_URI = "mongodb://admin:20_mongo_20#@127.0.0.1:27017/admin"
+DENIED = ['Forbidden', "Website Builder", "hosting"]
+proxy_nest = proxies.RotatingProxy("/home/tumi/instant.proxy")
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "general.settings")
-# import django
-# django.setup()
-from app import setup
 
-setup()
-
-from app.models import Company
-from sentence_transformers import SentenceTransformer
-
-encoder = SentenceTransformer("all-MiniLM-L6-v2")
 
 dummy_list = [
     {"domain": "microsoft.com", "title": "Microsoft",
@@ -32,29 +24,3 @@ dummy_list = [
     {"domain": "lakera.ai", "title": "The AI Security Company.",
      "summary": "Lakera empowers developers to confidently build secure AI applications and deploy them at scale."},
 ]
-
-
-def delete_dummy_list_from_db():
-    for doc in dummy_list:
-        Company.objects.filter(id=string_2_uuid(doc['domain'])).delete()
-
-
-def add_dummy():
-    for doc in dummy_list:
-        vector = encoder.encode(doc['summary']).tolist()
-        company, created = Company.objects.update_or_create(
-            id=string_2_uuid(doc['domain']),
-            defaults={
-                "title": doc['title'],
-                "domain": doc['domain'],
-                "summary": doc['summary'],
-                "embedding": vector
-            }
-        )
-        company.save()
-
-
-delete_dummy_list_from_db()
-print("Companies count in DB:", Company.objects.count())
-print("Done...")
-
